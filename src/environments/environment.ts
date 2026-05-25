@@ -8,8 +8,8 @@ export const environment = {
       prefix: ''
     },
     ws_campomesa: {
-      host: 'http://localhost',
-      port: '3000',
+      host: 'https://ws-dpp.onrender.com',
+      port: '',
       prefix: ''
     },
   },
