@@ -29,16 +29,6 @@ export class Sidebar {
       label: 'Productos',
       icon: 'bi bi-box-seam',
       route: '/productos',
-    },
-    {
-      label: 'Documentos',
-      icon: 'bi bi-file-earmark-text',
-      route: '/documentos',
-    },
-    {
-      label: 'Reportes',
-      icon: 'bi bi-bar-chart-line',
-      route: '/reportes',
-    },
+    }
   ];
 }
