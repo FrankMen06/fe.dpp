@@ -1,0 +1,345 @@
+<section class="container-fluid">
+  <div class="row g-4 mb-4">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+          <h2 class="fw-bold text-dark mb-1">
+            Resumen de Mensual CampoMesa
+          </h2>
+
+          <p class="text-secondary mb-0">
+            Visualiza el comportamiento de pedidos y productos vendidos.
+          </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 bg-white border rounded-4 px-3 py-2 shadow-sm">
+          <i class="bi bi-database-check text-success fs-5"></i>
+
+          <div class="lh-sm">
+            <div class="small fw-bold text-dark">Datos en tiempo real</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <p class="text-secondary small mb-1">Total pedidos</p>
+              <h3 class="fw-bold text-dark mb-0">{{ totalPedidos }}</h3>
+            </div>
+
+            <div
+              class="rounded-4 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center"
+              style="width: 52px; height: 52px;"
+            >
+              <i class="bi bi-receipt-cutoff fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <p class="text-secondary small mb-1">Unidades vendidas</p>
+              <h3 class="fw-bold text-dark mb-0">{{ totalUnidades }}</h3>
+            </div>
+
+            <div
+              class="rounded-4 bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center"
+              style="width: 52px; height: 52px;"
+            >
+              <i class="bi bi-box-seam fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <p class="text-secondary small mb-1">Ventas totales</p>
+              <h3 class="fw-bold text-dark mb-0">${{ totalVentas }}</h3>
+            </div>
+
+            <div
+              class="rounded-4 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center"
+              style="width: 52px; height: 52px;"
+            >
+              <i class="bi bi-cash-coin fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <p class="text-secondary small mb-1">Productos vendidos</p>
+              <h3 class="fw-bold text-dark mb-0">{{ totalProductos }}</h3>
+            </div>
+
+            <div
+              class="rounded-4 bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center"
+              style="width: 52px; height: 52px;"
+            >
+              <i class="bi bi-stars fs-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-5 text-center">
+            <div class="spinner-border text-success mb-3" role="status"></div>
+            <h5 class="fw-bold text-dark mb-1">Cargando dashboard</h5>
+            <p class="text-secondary mb-0">
+              Obteniendo datos desde el backend...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else if (errorMessage) {
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-danger rounded-4 shadow-sm border-0 d-flex align-items-center gap-3">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+
+          <div>
+            <strong>Ocurrió un error</strong>
+            <div>{{ errorMessage }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+          <div>
+            <h5 class="fw-bold text-dark mb-1">
+              Análisis de pedidos
+            </h5>
+
+            <p class="text-secondary small mb-0">
+              Consulta los gráficos principales del dashboard.
+            </p>
+          </div>
+
+          <ul class="nav nav-pills bg-light rounded-4 p-2">
+            <li class="nav-item">
+              <button
+                type="button"
+                class="nav-link rounded-4 px-3"
+                [class.active]="selectedTab === 'pedidos-mes'"
+                (click)="selectedTab = 'pedidos-mes'"
+              >
+                <i class="bi bi-calendar3 me-1"></i>
+                Pedidos por mes
+              </button>
+            </li>
+
+            <li class="nav-item">
+              <button
+                type="button"
+                class="nav-link rounded-4 px-3"
+                [class.active]="selectedTab === 'productos'"
+                (click)="selectedTab = 'productos'"
+              >
+                <i class="bi bi-trophy me-1"></i>
+                Productos más vendidos
+              </button>
+            </li>
+
+            <li class="nav-item">
+              <button
+                type="button"
+                class="nav-link rounded-4 px-3"
+                [class.active]="selectedTab === 'detalle'"
+                (click)="selectedTab = 'detalle'"
+              >
+                <i class="bi bi-table me-1"></i>
+                Detalle
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card-body p-4">
+        @if (selectedTab === 'pedidos-mes') {
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h5 class="fw-bold text-dark mb-1">
+                    Pedidos por mes
+                  </h5>
+
+                  <p class="text-secondary small mb-0">
+                    Cantidad de pedidos registrados mensualmente.
+                  </p>
+                </div>
+
+                <div
+                  class="rounded-4 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center"
+                  style="width: 44px; height: 44px;"
+                >
+                  <i class="bi bi-calendar3 fs-5"></i>
+                </div>
+              </div>
+
+              <highcharts-chart
+                [options]="pedidosPorMesOptions"
+                class="d-block w-100"
+                style="height: 390px;"
+              ></highcharts-chart>
+            </div>
+          </div>
+        }
+
+        @if (selectedTab === 'productos') {
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h5 class="fw-bold text-dark mb-1">
+                    Productos más vendidos
+                  </h5>
+
+                  <p class="text-secondary small mb-0">
+                    Top productos con mayor cantidad de unidades vendidas.
+                  </p>
+                </div>
+
+                <div
+                  class="rounded-4 bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center"
+                  style="width: 44px; height: 44px;"
+                >
+                  <i class="bi bi-trophy fs-5"></i>
+                </div>
+              </div>
+
+              <highcharts-chart
+                [options]="productosMasVendidosOptions"
+                class="d-block w-100"
+                style="height: 390px;"
+              ></highcharts-chart>
+            </div>
+          </div>
+        }
+
+        @if (selectedTab === 'detalle') {
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                  <h5 class="fw-bold text-dark mb-1">
+                    Detalle rápido de productos
+                  </h5>
+
+                  <p class="text-secondary small mb-0">
+                    Resumen de unidades, pedidos y ventas por producto.
+                  </p>
+                </div>
+
+                <div
+                  class="rounded-4 bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center"
+                  style="width: 44px; height: 44px;"
+                >
+                  <i class="bi bi-table fs-5"></i>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead>
+                  <tr>
+                    <th class="text-secondary small fw-bold">Producto</th>
+                    <th class="text-secondary small fw-bold text-end">Unidades</th>
+                    <th class="text-secondary small fw-bold text-end">Pedidos</th>
+                    <th class="text-secondary small fw-bold text-end">Ventas</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                    @for (producto of productosMasVendidos; track producto.producto) {
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-3">
+                            <div
+                              class="rounded-4 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center"
+                              style="width: 42px; height: 42px;"
+                            >
+                              <i class="bi bi-basket2-fill"></i>
+                            </div>
+
+                            <div>
+                              <div class="fw-bold text-dark">
+                                {{ producto.producto }}
+                              </div>
+
+                              <div class="small text-secondary">
+                                Producto vendido
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="text-end fw-semibold">
+                          {{ producto.total_unidades }}
+                        </td>
+
+                        <td class="text-end fw-semibold">
+                          {{ producto.total_pedidos }}
+                        </td>
+
+                        <td class="text-end fw-bold text-success">
+                          ${{ producto.total_ventas }}
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="4" class="text-center py-5">
+                          <i class="bi bi-inbox text-secondary fs-1"></i>
+
+                          <h6 class="fw-bold text-dark mt-3 mb-1">
+                            Sin datos disponibles
+                          </h6>
+
+                          <p class="text-secondary mb-0">
+                            Todavía no hay productos vendidos para mostrar.
+                          </p>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

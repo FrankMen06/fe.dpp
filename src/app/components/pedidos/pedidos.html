@@ -1,0 +1,239 @@
+<section class="container-fluid">
+  <div class="row g-4 mb-4">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+        <div>
+          <span class="badge rounded-pill text-bg-success px-3 py-2 mb-2">
+            <i class="bi bi-receipt-cutoff me-1"></i>
+            Pedidos
+          </span>
+
+          <h2 class="fw-bold text-dark mb-1">
+            Gestión de pedidos
+          </h2>
+
+          <p class="text-secondary mb-0">
+            Consulta los pedidos registrados desde la base de datos.
+          </p>
+        </div>
+
+        <button class="btn btn-success rounded-4 px-4 shadow-sm" type="button" (click)="loadPedidos()">
+          <i class="bi bi-arrow-clockwise me-2"></i>
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex align-items-center justify-content-between">
+          <div>
+            <p class="text-secondary small mb-1">Pedidos filtrados</p>
+            <h3 class="fw-bold text-dark mb-0">{{ totalPedidos }}</h3>
+          </div>
+
+          <div class="metric-icon bg-success bg-opacity-10 text-success">
+            <i class="bi bi-receipt-cutoff"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex align-items-center justify-content-between">
+          <div>
+            <p class="text-secondary small mb-1">Unidades</p>
+            <h3 class="fw-bold text-dark mb-0">{{ totalUnidades }}</h3>
+          </div>
+
+          <div class="metric-icon bg-primary bg-opacity-10 text-primary">
+            <i class="bi bi-box-seam"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4 d-flex align-items-center justify-content-between">
+          <div>
+            <p class="text-secondary small mb-1">Ventas</p>
+            <h3 class="fw-bold text-dark mb-0">${{ totalVentas }}</h3>
+          </div>
+
+          <div class="metric-icon bg-warning bg-opacity-10 text-warning">
+            <i class="bi bi-cash-coin"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-7">
+          <label class="form-label small fw-bold text-secondary">
+            Buscar pedido
+          </label>
+
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0">
+              <i class="bi bi-search text-secondary"></i>
+            </span>
+
+            <input
+              type="text"
+              class="form-control bg-light border-0"
+              placeholder="Cliente, teléfono, producto o dirección..."
+              [(ngModel)]="searchTerm"
+              (input)="filtrarPedidos()"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-3">
+          <label class="form-label small fw-bold text-secondary">
+            Estado
+          </label>
+
+          <select
+            class="form-select bg-light border-0"
+            [(ngModel)]="estadoSeleccionado"
+            (change)="filtrarPedidos()"
+          >
+            @for (estado of estados; track estado) {
+              <option [value]="estado">{{ estado }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-12 col-lg-2">
+          <button class="btn btn-light rounded-4 w-100" type="button" (click)="limpiarFiltros()">
+            <i class="bi bi-eraser me-1"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-5 text-center">
+        <div class="spinner-border text-success mb-3" role="status"></div>
+        <h5 class="fw-bold text-dark mb-1">Cargando pedidos</h5>
+        <p class="text-secondary mb-0">Obteniendo información desde el backend...</p>
+      </div>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+          <div>
+            <h5 class="fw-bold text-dark mb-1">Listado de pedidos</h5>
+            <p class="text-secondary small mb-0">
+              Mostrando {{ pedidosFiltrados.length }} pedido(s).
+            </p>
+          </div>
+
+          <div class="rounded-4 bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+            <i class="bi bi-table fs-5"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr>
+              <th class="text-secondary small fw-bold">Cliente</th>
+              <th class="text-secondary small fw-bold">Producto</th>
+              <th class="text-secondary small fw-bold text-center">Cantidad</th>
+              <th class="text-secondary small fw-bold text-end">Total</th>
+              <th class="text-secondary small fw-bold">Fecha</th>
+              <th class="text-secondary small fw-bold">Estado</th>
+            </tr>
+            </thead>
+
+            <tbody>
+              @for (pedido of pedidosFiltrados; track pedido.id) {
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="client-avatar">
+                        {{ pedido.nombre_cliente.charAt(0) }}{{ pedido.apellido_cliente.charAt(0) }}
+                      </div>
+
+                      <div>
+                        <div class="fw-bold text-dark">
+                          {{ pedido.nombre_cliente }} {{ pedido.apellido_cliente }}
+                        </div>
+
+                        <div class="small text-secondary">
+                          <i class="bi bi-telephone me-1"></i>
+                          {{ pedido.telefono_cliente }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="fw-semibold text-dark">
+                      {{ pedido.producto }}
+                    </div>
+
+                    <div class="small text-secondary text-truncate pedido-direccion">
+                      <i class="bi bi-geo-alt me-1"></i>
+                      {{ pedido.direccion }}
+                    </div>
+                  </td>
+
+                  <td class="text-center">
+                    <span class="badge rounded-pill text-bg-light px-3 py-2">
+                      {{ pedido.cantidad }}
+                    </span>
+                  </td>
+
+                  <td class="text-end fw-bold text-success">
+                    ${{ pedido.total }}
+                  </td>
+
+                  <td>
+                    <div class="fw-semibold text-dark">
+                      {{ pedido.fecha_pedido | date: 'dd/MM/yyyy' }}
+                    </div>
+
+                    <div class="small text-secondary">
+                      {{ pedido.hora_pedido }}
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="badge rounded-pill px-3 py-2" [class]="getBadgeEstado(pedido.estado)">
+                      {{ pedido.estado }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center py-5">
+                    <i class="bi bi-inbox text-secondary fs-1"></i>
+                    <h6 class="fw-bold text-dark mt-3 mb-1">Sin pedidos</h6>
+                    <p class="text-secondary mb-0">
+                      No hay pedidos para mostrar con los filtros actuales.
+                    </p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</section>

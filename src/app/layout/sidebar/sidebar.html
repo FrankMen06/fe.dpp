@@ -1,0 +1,27 @@
+<aside class="app-sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">
+      <i class="bi bi-basket2-fill"></i>
+    </div>
+
+    <div>
+      <h2>CampoMesa</h2>
+      <p>Admin Panel</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-menu">
+    @for (item of menuItems; track item.label) {
+      <a
+        class="menu-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+</aside>
